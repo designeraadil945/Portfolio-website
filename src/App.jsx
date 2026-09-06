@@ -39,17 +39,18 @@ import {
   FiX,
 } from "react-icons/fi";
 
-import heroPortrait from "./assets/raja-hero-v2.png";
+import heroPortrait from "./assets/adil-hero-transparent.png";
+import brandLogo from "./assets/adil-logo-transparent.png";
 
 const skills = [
-  ["Flutter", "flutter"], ["Dart", "dart"], ["Firebase", "firebase"], ["Laravel", "laravel"],
-  ["MySQL", "mysql"], ["HTML5", "html5"], ["CSS3", "css3"], ["JavaScript", "javascript"],
-  ["Git", "git"], ["Figma", "figma"], ["React", "react"], ["Node.js", "nodejs"],
-  ["TypeScript", "typescript"], ["Python", "python"], ["MongoDB", "mongodb"], ["PostgreSQL", "postgresql"],
-  ["Next.js", "nextjs"], ["Tailwind CSS", "tailwind"], ["Redux", "redux"], ["Express.js", "express"],
-  ["Java", "java"], ["C++", "cplusplus"], ["PHP", "php"], ["Docker", "docker"],
-  ["AWS", "aws"], ["Azure", "azure"], ["Kubernetes", "kubernetes"], ["Redis", "redis"],
-  ["GraphQL", "graphql"], ["GitHub", "github"], ["VS Code", "vscode"], ["Postman", "postman"],
+  ["HTML5", "html5"], ["CSS3", "css3"], ["JavaScript", "javascript"], ["Bootstrap", "css3"],
+  ["jQuery", "javascript"], ["WordPress", "php"], ["Git", "git"], ["GitHub", "github"],
+  ["Figma", "figma"], ["VS Code", "vscode"], ["Responsive Design", "css3"], ["Flexbox", "css3"],
+  ["React", "react"], ["Next.js", "nextjs"], ["Tailwind CSS", "tailwind"],
+  ["Wix", "https://img.icons8.com/color/96/wix.png"],
+  ["Shopify", "https://img.icons8.com/color/96/shopify.png"],
+  ["Webflow", "https://img.icons8.com/color/96/webflow.png"],
+  ["Photoshop", "https://img.icons8.com/color/96/adobe-photoshop--v1.png"],
 ];
 
 
@@ -241,7 +242,7 @@ const testimonials = [
     name: "Saurabh Mishra",
     designation: "Project Manager, ABC Technologies",
     message:
-      "Raja is a talented developer with great problem solving skills. He delivers high quality work and is always eager to learn new technologies.",
+      "Adil is a talented developer with great problem-solving skills. He delivers high-quality work and is always eager to learn new technologies.",
     image:
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHyH2ycErg5nEFLVIE8gvgyc5LBoKkm32IDeUmhQMFHA&s=10",
     rating: 5,
@@ -251,7 +252,7 @@ const testimonials = [
     name: "Rahul Sharma",
     designation: "Senior Developer, Tech Solutions",
     message:
-      "Working with Raja has been a great experience. He understands requirements quickly and always focuses on building clean and scalable solutions.",
+      "Working with Adil has been a great experience. He understands requirements quickly and always focuses on building clean and responsive solutions.",
     image:
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHyH2ycErg5nEFLVIE8gvgyc5LBoKkm32IDeUmhQMFHA&s=10",
     rating: 5,
@@ -261,7 +262,7 @@ const testimonials = [
     name: "Amit Verma",
     designation: "Product Manager, Digital Labs",
     message:
-      "Raja consistently delivers reliable work with great attention to detail. His Flutter and backend development skills are impressive.",
+      "Adil consistently delivers reliable work with great attention to detail. His frontend development and responsive design skills are impressive.",
     image:
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHyH2ycErg5nEFLVIE8gvgyc5LBoKkm32IDeUmhQMFHA&s=10",
     rating: 5,
@@ -369,6 +370,15 @@ function Header({ theme, toggleTheme }) {
   const [activeSection, setActiveSection] = useState("home");
 
   useEffect(() => {
+    const closeOnEscape = (event) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, []);
+
+  useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         const visible = entries
@@ -391,22 +401,34 @@ function Header({ theme, toggleTheme }) {
       <div className="mx-auto flex h-[82px] max-w-[1600px] items-center px-5 sm:px-8 lg:px-10 xl:px-16">
         <a
           href="#home"
-          className="text-[29px] font-extrabold tracking-[-1px] text-[#10243a] dark:text-white"
+          aria-label="Adil Mansoori — Home"
+          className="flex items-center"
         >
-          Raja<span className="text-[#5b5cff]">.</span>
+          <img src={brandLogo} alt="Adil Mansoori logo" className="h-12 w-auto object-contain" />
         </a>
 
         <button
-          onClick={() => setOpen(!open)}
-          className="ml-auto text-2xl text-[#10243a] dark:text-white md:hidden"
+          type="button"
+          onClick={() => setOpen((isOpen) => !isOpen)}
+          aria-label={open ? "Close navigation menu" : "Open navigation menu"}
+          aria-expanded={open}
+          aria-controls="mobile-navigation"
+          className="group ml-auto grid h-11 w-11 place-items-center rounded-full text-[#10243a] transition duration-300 active:scale-90 dark:text-white md:hidden"
         >
-          ☰
+          <span className="relative block h-5 w-6" aria-hidden="true">
+            <span className={`absolute left-0 top-[2px] h-[2px] w-6 rounded-full bg-current transition-all duration-300 ease-out ${open ? "translate-y-[7px] rotate-45" : ""}`} />
+            <span className={`absolute left-0 top-[9px] h-[2px] w-6 rounded-full bg-current transition-all duration-200 ${open ? "scale-x-0 opacity-0" : ""}`} />
+            <span className={`absolute left-0 top-[16px] h-[2px] w-6 rounded-full bg-current transition-all duration-300 ease-out ${open ? "-translate-y-[7px] -rotate-45" : ""}`} />
+          </span>
         </button>
 
         <nav
+          id="mobile-navigation"
           className={`${
-            open ? "flex" : "hidden"
-          } absolute top-[82px] left-0 w-full flex-col items-center gap-7 border-b border-[#c9dce9] dark:border-[#173047] bg-white dark:bg-[#061727] py-7 md:static md:ml-auto md:flex md:w-auto md:flex-row md:border-0 md:bg-transparent md:py-0`}
+            open
+              ? "visible max-h-[540px] translate-y-0 scale-y-100 border-[#c9dce9] py-7 opacity-100 dark:border-[#173047]"
+              : "invisible max-h-0 -translate-y-3 scale-y-95 border-transparent py-0 opacity-0 pointer-events-none"
+          } absolute top-[82px] left-0 flex w-full origin-top flex-col items-center gap-7 overflow-hidden border-b bg-white transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)] dark:bg-[#061727] md:visible md:static md:ml-auto md:flex md:max-h-none md:w-auto md:translate-y-0 md:scale-y-100 md:flex-row md:overflow-visible md:border-0 md:bg-transparent md:py-0 md:opacity-100 md:pointer-events-auto`}
         >
           {navItems.map((item, index) => (
             <a
@@ -416,7 +438,10 @@ function Header({ theme, toggleTheme }) {
                 setOpen(false);
                 scrollToSection(event, item.toLowerCase());
               }}
-              className={`relative text-[16px] transition-all duration-300 hover:-translate-y-1 hover:text-[#0bbcff] ${
+              style={{ transitionDelay: open ? `${100 + index * 45}ms` : "0ms" }}
+              className={`relative transition-all duration-300 active:scale-90 md:translate-y-0 md:opacity-100 text-[16px] hover:-translate-y-1 hover:text-[#0bbcff] ${
+                open ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0"
+              } ${
                 activeSection === item.toLowerCase() ? "text-[#0bbcff]" : "text-[#465c70] dark:text-[#c4cfda]"
               }`}
             >
@@ -508,19 +533,19 @@ function Hero() {
           </div>
 
           <h1 className="text-[48px] leading-[.96] font-extrabold tracking-[-3px] text-[#10243a] dark:text-white sm:text-[58px] lg:text-[64px]">
-            Raja{" "}
+            Adil{" "}
             <span className="bg-gradient-to-r from-[#13afff] to-[#7051ff] bg-clip-text text-transparent">
-              Kumar
+              Mansoori
             </span>
           </h1>
 
           <h3 className="mt-4 text-[18px] font-semibold text-[#10243a] dark:text-white lg:text-[20px]">
-            Flutter Developer | Backend Enthusiast
+            Frontend Developer
           </h3>
 
           <p className={`${paragraphClass} mx-auto mt-4 max-w-[520px] lg:mx-0`}>
-            I build modern, scalable and user-friendly mobile & web applications
-            that solve real world problems.
+            I create clean, responsive and user-friendly web interfaces with
+            careful attention to layout, usability and visual detail.
           </p>
 
           <div className="mt-7 flex flex-wrap justify-center gap-4 lg:justify-start">
@@ -529,14 +554,18 @@ function Hero() {
               <FaArrowRight className="ml-2 text-[12px]" />
             </a>
 
-            <a href="#about" onClick={(event) => scrollToSection(event, "about")} className={outlineButton}>
+            <a
+              href={`${import.meta.env.BASE_URL}adil-mansoori-frontend-resume.pdf`}
+              download="Adil-Mansoori-Frontend-Developer-Resume.pdf"
+              className={outlineButton}
+            >
               Download CV
               <span className="ml-3">⇩</span>
             </a>
           </div>
 
           <div className="mt-4 flex justify-center gap-3 lg:justify-start">
-            <SocialButton href="https://linkedin.com">
+            <SocialButton href="https://linkedin.com/in/adil-mansoori-441921259">
               <FaLinkedinIn />
             </SocialButton>
 
@@ -548,14 +577,14 @@ function Hero() {
               <FaTwitter />
             </SocialButton>
 
-            <SocialButton href="mailto:raja@example.com">
+            <SocialButton href="mailto:designer.aadil945@gmail.com">
               <FaEnvelope />
             </SocialButton>
           </div>
 
           <div className="mt-10 flex justify-center lg:justify-start">
             {[
-              ["50+", "Projects Completed"],
+              ["3", "Professional Roles"],
               ["3+", "Years Experience"],
               ["100%", "Client Satisfaction"],
             ].map((item, index) => (
@@ -595,8 +624,8 @@ function Hero() {
 
           <img
             src={heroPortrait}
-            alt="Raja Kumar"
-            className="relative z-10 h-[420px] max-w-none sm:h-[510px] object-contain object-bottom lg:h-[590px]"
+            alt="Adil Mansoori"
+            className="relative z-10 h-[400px] w-[270px] rounded-t-[190px] object-cover object-top sm:h-[500px] sm:w-[355px] lg:h-[545px] lg:w-[390px]"
           />
 
           <div data-parallax="0.34" className="absolute top-[140px] left-[1%] z-20 hidden font-serif text-[28px] leading-[1.1] italic text-[#4f5fa9] dark:text-[#cdd7ff] lg:block">
@@ -635,14 +664,14 @@ function Hero() {
 
 function ExpertiseStrip() {
   const items = [
-    "Flutter Apps",
+    "Responsive Websites",
     "Web Development",
-    "Backend APIs",
+    "WordPress",
     "Dashboard Design",
     "UI Implementation",
-    "Flutter Apps",
+    "Responsive Websites",
     "Web Development",
-    "Backend APIs",
+    "WordPress",
     "Dashboard Design",
     "UI Implementation",
   ];
@@ -694,9 +723,9 @@ function ExpertiseStrip() {
 
 function About() {
   const info = [
-    [FiUser, "Name", "Raja Kumar"],
-    [FiMail, "Email", "raja@example.com"],
-    [FiMapPin, "Location", "Bengaluru, India"],
+    [FiUser, "Name", "Adil Mansoori"],
+    [FiMail, "Email", "designer.aadil945@gmail.com"],
+    [FiMapPin, "Location", "Jaipur, Rajasthan, India"],
     [FiBriefcase, "Availability", "Open to opportunities"],
   ];
 
@@ -721,10 +750,10 @@ function About() {
         </SectionTitle>
 
         <p className={`${paragraphClass} mt-5`}>
-          I'm a Flutter developer with experience in building cross-platform
-          mobile applications, REST APIs, and modern web solutions. I love
-          turning ideas into real products and continuously learning new
-          technologies.
+          I'm a frontend developer with professional experience creating clean,
+          responsive and user-friendly web interfaces. Skilled in HTML5, CSS3,
+          JavaScript, Bootstrap, jQuery and WordPress, with strong communication,
+          collaboration and attention to visual detail.
         </p>
 
         <a href="#projects" onClick={(event) => scrollToSection(event, "projects")} className={`${outlineButton} mt-6 h-[42px] px-6`}>
@@ -773,29 +802,29 @@ function Skills() {
 
         <div className="shrink-0 items-end gap-10 sm:flex">
           <p className="hidden max-w-[355px] text-[16px] leading-6 text-[#52697d] dark:text-[#98aabd] md:block">
-            I work with modern technologies to build fast, scalable and
-            maintainable applications.
+            I use modern frontend tools to build responsive, accessible and
+            maintainable web interfaces.
           </p>
 
           <button type="button" onClick={toggleSkills} aria-expanded={showAll} className="whitespace-nowrap rounded-full border border-[#9dd9ee] px-3 py-2 text-[11px] font-semibold text-[#078fc8] transition-all duration-300 hover:translate-x-1 hover:bg-[#e5f7fd] dark:border-[#174b67] dark:text-[#08b9ff] dark:hover:bg-[#0b2940] sm:px-4 sm:text-[14px]">{showAll ? "Collapse ↑" : `View All (${skills.length}) →`}</button>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3 md:grid-cols-5 lg:grid-cols-8">
+      <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 sm:gap-3 md:grid-cols-5 lg:grid-cols-8">
         {visibleSkills.map(([name, icon], index) => (
           <article
             key={name}
             style={{ animationDelay: `${Math.min(index, 16) * 45}ms` }}
 
-            className="group flex min-h-[92px] animate-skill-in flex-col items-center justify-center gap-2 rounded-[10px] p-2 sm:min-h-[120px] sm:gap-3 sm:rounded-[11px] sm:p-3 border border-[#c9dce9] dark:border-[#19384f] bg-white dark:bg-[#092034] transition-all duration-300 hover:-translate-y-3 hover:scale-105 hover:border-[#0bbcff] hover:shadow-[0_18px_45px_rgba(9,185,255,.22)] active:scale-95"
+            className="group flex min-h-[110px] animate-skill-in flex-col items-center justify-center gap-2.5 rounded-[10px] p-2 sm:min-h-[120px] sm:gap-3 sm:rounded-[11px] sm:p-3 border border-[#c9dce9] dark:border-[#19384f] bg-white dark:bg-[#092034] transition-all duration-300 hover:-translate-y-3 hover:scale-105 hover:border-[#0bbcff] hover:shadow-[0_18px_45px_rgba(9,185,255,.22)] active:scale-95"
           >
             <img
-              src={`/tech/${icon}.png`}
+              src={icon.startsWith("http") ? icon : `${import.meta.env.BASE_URL}tech/${icon}.png`}
               alt={name}
-              className="h-10 w-10 object-contain transition duration-300 group-hover:scale-110 sm:h-14 sm:w-14 lg:h-16 lg:w-16"
+              className="h-12 w-12 object-contain transition duration-300 group-hover:scale-110 sm:h-14 sm:w-14 lg:h-16 lg:w-16"
             />
 
-            <span className="max-w-full truncate text-[11px] font-medium text-[#263f55] dark:text-[#d6e2ed] sm:text-[14px] lg:text-[16px]">{name}</span>
+            <span className="max-w-full truncate text-[12px] font-medium text-[#263f55] dark:text-[#d6e2ed] sm:text-[14px] lg:text-[16px]">{name}</span>
           </article>
         ))}
       </div>
@@ -813,22 +842,22 @@ function Services() {
     {
       icon: FaMobileAlt,
       number: "01",
-      title: "Mobile Development",
-      description: "Polished cross-platform Flutter applications with responsive interfaces, smooth performance, and production-ready architecture.",
+      title: "Responsive Web Development",
+      description: "Clean, responsive websites that work consistently across desktop, tablet and mobile screen sizes.",
       accent: "from-[#08b9ff] to-[#3578ff]",
     },
     {
       icon: FaServer,
       number: "02",
-      title: "Backend & APIs",
-      description: "Secure REST APIs, database design, authentication, integrations, and scalable backend services built for real products.",
+      title: "WordPress Development",
+      description: "User-friendly WordPress websites with thoughtful layouts, clear content structure and dependable implementation.",
       accent: "from-[#3578ff] to-[#7354ff]",
     },
     {
       icon: FaLayerGroup,
       number: "03",
-      title: "Full Product Build",
-      description: "From product planning and UI implementation to deployment, maintenance, analytics, and continuous improvements.",
+      title: "UI Implementation",
+      description: "Accurate frontend implementation from designs using HTML, CSS, JavaScript, Bootstrap and jQuery.",
       accent: "from-[#7354ff] to-[#b24cff]",
     },
   ];
@@ -1353,16 +1382,22 @@ function Blog() {
 function Experience() {
   const experience = [
     [
-      "2023 - Present",
-      "Flutter Developer",
-      "ABC Technologies, Bengaluru",
-      "Working on cross-platform mobile apps, integrating APIs, and building scalable solutions.",
+      "Apr 2024 - Present",
+      "Frontend Developer · Full-time",
+      "Syslotech IT Solution, Jaipur · On-site",
+      "Develop and maintain responsive frontend interfaces using HTML, CSS, JavaScript, Bootstrap and WordPress.",
     ],
     [
-      "2021 - 2023",
-      "Junior Developer",
-      "XYZ Solutions, Noida",
-      "Worked on web applications using Laravel and MySQL.",
+      "Jun 2023 - Nov 2023",
+      "Frontend Developer · 6 months",
+      "SemiDot InfoTech",
+      "Worked on frontend implementation and responsive web layouts across desktop and mobile screen sizes.",
+    ],
+    [
+      "Aug 2022 - Feb 2023",
+      "Frontend Web Developer · 7 months",
+      "Coding Jet · Internship",
+      "Built foundational experience in HTML, CSS, JavaScript, jQuery, Bootstrap and web design.",
     ],
   ];
 
@@ -1416,8 +1451,8 @@ function Experience() {
 
 function ProfileHighlights() {
   const highlights = [
-    [FaMobileAlt, "Mobile-first craft", "Cross-platform Flutter experiences designed for clarity, speed, and real-world use."],
-    [FaLayerGroup, "Full-stack thinking", "Frontend, APIs, databases, and deployment considered as one connected product."],
+    [FaMobileAlt, "Responsive interfaces", "Cross-device web layouts designed for clarity, usability and consistent presentation."],
+    [FaLayerGroup, "Frontend implementation", "Clean HTML, CSS and JavaScript brought together with Bootstrap, jQuery and WordPress."],
     [FiUsers, "Collaborative delivery", "Clear communication, visible progress, and thoughtful decisions throughout the build."],
     [FiTrendingUp, "Growth mindset", "Consistent learning and iteration to keep products maintainable and ready to scale."],
   ];
@@ -1429,10 +1464,10 @@ function ProfileHighlights() {
         <div>
           <SectionTitle tag="PROFILE HIGHLIGHTS">What I Bring to a Team</SectionTitle>
           <p className={`${paragraphClass} mt-5 max-w-[480px]`}>
-            I combine hands-on development with a product-focused approach—turning requirements into reliable experiences that are easy to use and maintain.
+            I combine hands-on frontend development with a strong eye for visual detail—turning requirements into responsive experiences that are easy to use and maintain.
           </p>
           <div className="mt-7 grid grid-cols-2 gap-3">
-            {[["32+", "Technologies"], ["3", "Featured projects"], ["Mobile + Web", "Product platforms"], ["Open", "To opportunities"]].map(([value, label]) => (
+            {[["12", "Core skills"], ["3", "Professional roles"], ["Web", "Primary platform"], ["Open", "To opportunities"]].map(([value, label]) => (
               <div key={label} className="rounded-xl border border-[#c9dce9] bg-white/70 p-4 dark:border-[#19384f] dark:bg-[#092034]/70">
                 <strong className="block text-[20px] text-[#10243a] dark:text-white">{value}</strong>
                 <span className="mt-1 block text-[12px] text-[#60768a] dark:text-[#91a6ba]">{label}</span>
@@ -1460,9 +1495,9 @@ function ProfileHighlights() {
 
 function LearningJourney() {
   const learning = [
-    [FiBookOpen, "Mobile Engineering", "Flutter, Dart, responsive interfaces, app architecture, and performance."],
-    [FaServer, "Backend Development", "REST APIs, authentication, relational data, Firebase, Laravel, and Node.js."],
-    [FiAward, "Cloud & Delivery", "Deployment workflows, Docker, cloud platforms, monitoring, and reliable releases."],
+    [FiBookOpen, "Modern Frontend", "Responsive interfaces, semantic HTML, modern CSS, JavaScript and performance."],
+    [FaServer, "WordPress & CMS", "Reusable page structures, content management and maintainable website delivery."],
+    [FiAward, "UI & Collaboration", "Figma workflows, visual accuracy, Git collaboration and accessible design practices."],
   ];
 
   return (
@@ -1492,9 +1527,9 @@ function LearningJourney() {
 
 function CurrentFocus() {
   const focusAreas = [
-    [FaMobileAlt, "Advanced Flutter", "Refining responsive UI, performance, animation, and scalable app architecture.", "01"],
-    [FaServer, "Backend Systems", "Building secure APIs, robust data flows, authentication, and dependable integrations.", "02"],
-    [FaRocket, "Cloud & Delivery", "Exploring smoother deployment, monitoring, automation, and production workflows.", "03"],
+    [FaMobileAlt, "Advanced CSS", "Refining responsive layouts, animation, accessibility and cross-browser consistency.", "01"],
+    [FaServer, "Modern JavaScript", "Strengthening reusable UI patterns, clean code and dependable frontend interactions.", "02"],
+    [FaRocket, "Frontend Delivery", "Improving Git workflows, performance optimization and reliable website deployment.", "03"],
   ];
 
   return (
@@ -1737,7 +1772,7 @@ function Testimonial() {
 function FAQ() {
   const [openIndex, setOpenIndex] = useState(0);
   const questions = [
-    ["What technologies do you work with?", "I primarily build with Flutter, React, Node.js, Laravel, Firebase, MySQL, MongoDB, and PostgreSQL. I select the stack according to the product rather than forcing one technology everywhere."],
+    ["What technologies do you work with?", "I primarily work with HTML5, CSS3, JavaScript, jQuery, Bootstrap and WordPress. I also use Git, GitHub, Figma and VS Code in my workflow."],
     ["Are you available for freelance projects?", "Yes. I am open to selected freelance projects, product collaborations, and long-term development work. Share your scope and expected timeline through the contact form."],
     ["How do you ensure projects are delivered on time?", "I split work into clear milestones, share progress frequently, identify risks early, and keep scope and priorities transparent throughout development."],
     ["Do you provide post-launch support?", "Yes. I can help with monitoring, bug fixes, performance improvements, store releases, new features, and ongoing product maintenance after launch."],
@@ -1798,10 +1833,10 @@ function Contact() {
               </span>
 
               <a
-                href="mailto:raja@example.com"
+                href="mailto:designer.aadil945@gmail.com"
                 className="text-[#10243a] dark:text-[#edf6ff] transition hover:text-[#0bbcff]"
               >
-                raja@example.com
+                designer.aadil945@gmail.com
               </a>
             </div>
 
@@ -1812,10 +1847,10 @@ function Contact() {
               </span>
 
               <a
-                href="tel:+919876543210"
+                href="tel:+919587889945"
                 className="text-[#10243a] dark:text-[#edf6ff] transition hover:text-[#0bbcff]"
               >
-                +91 98765 43210
+                +91 95878 89945
               </a>
             </div>
 
@@ -1825,7 +1860,7 @@ function Contact() {
                 <FiMapPin className="text-[22px]" />
               </span>
 
-              <span className="text-[#10243a] dark:text-[#edf6ff]">Bengaluru, India</span>
+              <span className="text-[#10243a] dark:text-[#edf6ff]">Jaipur, Rajasthan, India</span>
             </div>
           </div>
         </div>
@@ -1961,12 +1996,12 @@ function Footer() {
   return (
     <footer className="mx-auto grid min-h-[100px] max-w-[1600px] grid-cols-1 items-center gap-6 px-5 py-6 text-center sm:px-8 md:grid-cols-[1fr_auto_1fr] lg:px-10 xl:px-16">
       <div className="md:text-left">
-        <a href="#home" className="text-[27px] font-extrabold tracking-[-1px]">
-          Raja<span className="text-[#6653ff]">.</span>
+        <a href="#home" aria-label="Adil Mansoori — Home" className="inline-flex items-center">
+          <img src={brandLogo} alt="Adil Mansoori logo" className="h-14 w-auto object-contain" />
         </a>
 
         <p className="mt-3 text-[14px] text-[#5a7083] dark:text-[#788da1]">
-          © 2026 Raja Kumar. All rights reserved.
+          © 2026 Adil Mansoori. All rights reserved.
         </p>
       </div>
 
@@ -1980,10 +2015,10 @@ function Footer() {
       <div className="md:text-right">
         <div className="flex justify-center gap-3 md:justify-end">
           {[
-            [FaLinkedinIn, "LinkedIn", "https://linkedin.com"],
+            [FaLinkedinIn, "LinkedIn", "https://linkedin.com/in/adil-mansoori-441921259"],
             [FaGithub, "GitHub", "https://github.com"],
             [FaTwitter, "Twitter", "https://twitter.com"],
-            [FaEnvelope, "Email", "mailto:raja@example.com"],
+            [FaEnvelope, "Email", "mailto:designer.aadil945@gmail.com"],
           ].map(([Icon, label, href]) => (
             <a
               key={label}
