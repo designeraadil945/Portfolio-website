@@ -32,6 +32,11 @@ import {
   FiEdit3,
   FiPlay,
   FiCheckCircle,
+  FiAward,
+  FiBookOpen,
+  FiTrendingUp,
+  FiUsers,
+  FiX,
 } from "react-icons/fi";
 
 import heroPortrait from "./assets/raja-hero-v2.png";
@@ -119,13 +124,21 @@ function useSiteReveal() {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const selectors = [
       "main section h2",
-      "main section article",
+      "main section:not(#faq) article",
       "main section form",
       "main section [data-tilt]",
       "main section img",
       "footer > *",
     ];
     const items = [...new Set(document.querySelectorAll(selectors.join(",")))];
+
+    const resetItems = () => {
+      items.forEach((item) => {
+        item.removeAttribute("data-site-reveal");
+        item.classList.remove("is-visible");
+        item.style.removeProperty("--reveal-delay");
+      });
+    };
 
     items.forEach((item) => {
       const section = item.closest("section, footer");
@@ -136,7 +149,7 @@ function useSiteReveal() {
 
     if (reduceMotion) {
       items.forEach((item) => item.classList.add("is-visible"));
-      return undefined;
+      return resetItems;
     }
 
     const observer = new IntersectionObserver(
@@ -151,7 +164,10 @@ function useSiteReveal() {
     );
 
     items.forEach((item) => observer.observe(item));
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      resetItems();
+    };
   }, []);
 }
 
@@ -253,40 +269,46 @@ const testimonials = [
 ];
 
 const projects = [
-  [
-    "AssetCare",
-    "A cross-platform asset management app built with Flutter.",
-    ["Flutter", "Firebase", "REST API"],
-    "https://images.unsplash.com/photo-1551650975-87deedd944c3?auto=format&fit=crop&w=900&q=85",
-    "Mobile App",
-  ],
-  [
-    "Task Manager",
-    "A productivity app to manage daily tasks efficiently.",
-    ["React", "Node.js", "MySQL"],
-    "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=900&q=85",
-    "Web App",
-  ],
-  [
-    "Portfolio Website",
-    "A personal portfolio website to showcase my work.",
-    ["HTML", "CSS", "JavaScript"],
-    "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=900&q=85",
-    "Web App",
-  ],
+  {
+    title: "AssetCare",
+    description: "A cross-platform asset management app built with Flutter.",
+    tags: ["Flutter", "Firebase", "REST API"],
+    image: "https://images.unsplash.com/photo-1551650975-87deedd944c3?auto=format&fit=crop&w=900&q=85",
+    type: "Mobile App",
+    challenge: "Make asset records easy to find, update, and maintain from a mobile device without creating a complicated workflow.",
+    approach: "Designed a focused cross-platform experience, connected remote data through APIs, and used Firebase for dependable application services.",
+    contribution: ["Mobile UI development", "API integration", "Data and state handling"],
+  },
+  {
+    title: "Task Manager",
+    description: "A productivity app to manage daily tasks efficiently.",
+    tags: ["React", "Node.js", "MySQL"],
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=900&q=85",
+    type: "Web App",
+    challenge: "Create a simple way to organize daily work while keeping task data structured and available across sessions.",
+    approach: "Built a responsive React interface supported by a Node.js API and a relational MySQL data model.",
+    contribution: ["Responsive interface", "Backend API", "Database design"],
+  },
+  {
+    title: "Portfolio Website",
+    description: "A personal portfolio website to showcase my work.",
+    tags: ["HTML", "CSS", "JavaScript"],
+    image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=900&q=85",
+    type: "Web App",
+    challenge: "Present skills, experience, and projects in a format that is quick to scan and pleasant to explore on every screen size.",
+    approach: "Created a responsive visual system with accessible navigation, reusable sections, theme support, and subtle interaction feedback.",
+    contribution: ["Visual design", "Frontend development", "Responsive experience"],
+  },
 ];
 
 const navItems = [
   "Home",
   "About",
   "Skills",
-  "Services",
   "Projects",
-  "Process",
   "Experience",
-  "Blog",
-  "Testimonials",
-  "FAQ",
+  "Profile",
+  "Learning",
   "Contact",
 ];
 
@@ -888,48 +910,62 @@ function ValueSection() {
 }
 
 function Projects() {
+  const [selectedProject, setSelectedProject] = useState(null);
+
+  useEffect(() => {
+    if (!selectedProject) return undefined;
+    const closeOnEscape = (event) => {
+      if (event.key === "Escape") setSelectedProject(null);
+    };
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [selectedProject]);
+
   return (
     <section id="projects" className={sectionClass}>
       <div className="mb-8 flex items-end justify-between">
         <SectionTitle tag="FEATURED PROJECTS">Some of My Work</SectionTitle>
 
-        <button className="hidden text-[14px] font-semibold text-[#08b9ff] sm:block">
-          View All Projects →
-        </button>
+        <span className="hidden text-[14px] font-semibold text-[#08b9ff] sm:block">{projects.length} selected projects</span>
       </div>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {projects.map(([title, description, tags, image, type]) => (
+        {projects.map((project) => (
           <article
-            key={title}
+            key={project.title}
             data-tilt
             className="group overflow-hidden rounded-[11px] border border-[#c9dce9] dark:border-[#19384f] bg-white dark:bg-[#092034] transition-all duration-300 will-change-transform hover:border-[#0bbcff]"
           >
             <div className="relative h-[175px] overflow-hidden">
               <img
-                src={image}
-                alt={title}
+                src={project.image}
+                alt={project.title}
                 className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-115 group-hover:rotate-1"
               />
 
               <span className="absolute bottom-2 left-3 rounded-full bg-white/95 px-3 py-1 text-[12px] text-[#27445b] shadow-sm dark:bg-[#172f44]/90 dark:text-white">
-                {type}
+                {project.type}
               </span>
 
-              <button className="absolute top-3 right-3 grid h-8 w-8 place-items-center rounded-lg bg-white/95 text-[#27445b] shadow-sm dark:bg-[#10283b]/90 dark:text-white">
+              <button type="button" onClick={() => setSelectedProject(project)} aria-label={`View ${project.title} case study`} className="absolute top-3 right-3 grid h-8 w-8 place-items-center rounded-lg bg-white/95 text-[#27445b] shadow-sm transition hover:scale-110 hover:text-[#078fc8] dark:bg-[#10283b]/90 dark:text-white">
                 ↗
               </button>
             </div>
 
             <div className="p-5">
-              <h3 className="text-[18px] font-bold text-[#10243a] dark:text-white">{title}</h3>
+              <h3 className="text-[18px] font-bold text-[#10243a] dark:text-white">{project.title}</h3>
 
               <p className={`${paragraphClass} mt-2 min-h-[48px]`}>
-                {description}
+                {project.description}
               </p>
 
               <div className="mt-4 flex flex-wrap gap-2">
-                {tags.map((tag) => (
+                {project.tags.map((tag) => (
                   <span
                     key={tag}
                     className={`rounded-full px-3 py-[5px] text-[12px] ${
@@ -942,10 +978,33 @@ function Projects() {
                   </span>
                 ))}
               </div>
+              <button type="button" onClick={() => setSelectedProject(project)} className="mt-5 inline-flex items-center gap-2 text-[13px] font-semibold text-[#078fc8] transition hover:gap-3 dark:text-[#0bbcff]">
+                View case study <FaArrowRight className="text-[10px]" />
+              </button>
             </div>
           </article>
         ))}
       </div>
+
+      {selectedProject && (
+        <div role="presentation" onMouseDown={(event) => event.target === event.currentTarget && setSelectedProject(null)} className="fixed inset-0 z-[100] grid place-items-center bg-[#03101d]/75 p-4 backdrop-blur-md">
+          <article role="dialog" aria-modal="true" aria-labelledby="case-study-title" className="relative max-h-[90vh] w-full max-w-[760px] overflow-y-auto rounded-3xl border border-[#b8d7e8] bg-[#f7fbfd] p-6 shadow-[0_35px_100px_rgba(0,0,0,.38)] dark:border-[#23435c] dark:bg-[#071b2c] sm:p-9">
+            <button type="button" onClick={() => setSelectedProject(null)} aria-label="Close case study" className="absolute right-5 top-5 grid h-10 w-10 place-items-center rounded-full border border-[#c9dce9] bg-white text-[#29465e] transition hover:rotate-90 hover:border-[#0bbcff] hover:text-[#078fc8] dark:border-[#23435c] dark:bg-[#102b42] dark:text-white"><FiX className="text-xl" /></button>
+            <span className="text-[12px] font-bold uppercase tracking-[2px] text-[#0aaeea]">{selectedProject.type} · Case Study</span>
+            <h3 id="case-study-title" className="mt-3 pr-12 text-[30px] font-bold tracking-[-1px] text-[#10243a] dark:text-white">{selectedProject.title}</h3>
+            <p className={`${paragraphClass} mt-3`}>{selectedProject.description}</p>
+            <div className="mt-7 grid gap-6 sm:grid-cols-2">
+              <div><h4 className="font-bold text-[#10243a] dark:text-white">The challenge</h4><p className={`${paragraphClass} mt-2 text-[14px]`}>{selectedProject.challenge}</p></div>
+              <div><h4 className="font-bold text-[#10243a] dark:text-white">My approach</h4><p className={`${paragraphClass} mt-2 text-[14px]`}>{selectedProject.approach}</p></div>
+            </div>
+            <div className="mt-7 rounded-2xl border border-[#c9dce9] bg-white/70 p-5 dark:border-[#19384f] dark:bg-[#092034]">
+              <h4 className="font-bold text-[#10243a] dark:text-white">Key contributions</h4>
+              <div className="mt-3 grid gap-2 sm:grid-cols-3">{selectedProject.contribution.map((item) => <span key={item} className="flex items-center gap-2 text-[13px] text-[#526a7e] dark:text-[#a9bbca]"><FiCheckCircle className="shrink-0 text-[#0bbcff]" />{item}</span>)}</div>
+            </div>
+            <div className="mt-6 flex flex-wrap gap-2">{selectedProject.tags.map((tag) => <span key={tag} className="rounded-full bg-[#e4f2f8] px-3 py-1.5 text-[12px] text-[#365a70] dark:bg-[#12364e] dark:text-[#c6d8e6]">{tag}</span>)}</div>
+          </article>
+        </div>
+      )}
     </section>
   );
 }
@@ -1351,6 +1410,82 @@ function Experience() {
           </div>
         </div>
       </div>
+    </section>
+  );
+}
+
+function ProfileHighlights() {
+  const highlights = [
+    [FaMobileAlt, "Mobile-first craft", "Cross-platform Flutter experiences designed for clarity, speed, and real-world use."],
+    [FaLayerGroup, "Full-stack thinking", "Frontend, APIs, databases, and deployment considered as one connected product."],
+    [FiUsers, "Collaborative delivery", "Clear communication, visible progress, and thoughtful decisions throughout the build."],
+    [FiTrendingUp, "Growth mindset", "Consistent learning and iteration to keep products maintainable and ready to scale."],
+  ];
+
+  return (
+    <section id="profile" className={`${sectionClass} relative overflow-hidden scroll-mt-[82px]`}>
+      <div className="pointer-events-none absolute -right-28 top-0 h-72 w-72 rounded-full bg-[#0bbcff]/10 blur-[90px]" />
+      <div className="relative z-10 grid gap-10 lg:grid-cols-[.72fr_1.28fr] lg:items-start">
+        <div>
+          <SectionTitle tag="PROFILE HIGHLIGHTS">What I Bring to a Team</SectionTitle>
+          <p className={`${paragraphClass} mt-5 max-w-[480px]`}>
+            I combine hands-on development with a product-focused approach—turning requirements into reliable experiences that are easy to use and maintain.
+          </p>
+          <div className="mt-7 grid grid-cols-2 gap-3">
+            {[["32+", "Technologies"], ["3", "Featured projects"], ["Mobile + Web", "Product platforms"], ["Open", "To opportunities"]].map(([value, label]) => (
+              <div key={label} className="rounded-xl border border-[#c9dce9] bg-white/70 p-4 dark:border-[#19384f] dark:bg-[#092034]/70">
+                <strong className="block text-[20px] text-[#10243a] dark:text-white">{value}</strong>
+                <span className="mt-1 block text-[12px] text-[#60768a] dark:text-[#91a6ba]">{label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          {highlights.map(([Icon, title, description], index) => (
+            <article key={title} data-tilt className="group rounded-2xl border border-[#c9dce9] bg-white p-6 transition-all duration-300 hover:border-[#0bbcff] dark:border-[#19384f] dark:bg-[#092034]">
+              <div className="flex items-start justify-between gap-4">
+                <span className="grid h-12 w-12 place-items-center rounded-xl bg-[#e5f4fb] text-xl text-[#078fc8] transition-all duration-300 group-hover:rotate-6 group-hover:bg-[#0bbcff] group-hover:text-white dark:bg-[#102d45] dark:text-[#0bbcff]"><Icon /></span>
+                <span className="text-[11px] font-bold tracking-[2px] text-[#91a6ba]">0{index + 1}</span>
+              </div>
+              <h3 className="mt-5 text-[18px] font-bold text-[#10243a] dark:text-white">{title}</h3>
+              <p className={`${paragraphClass} mt-2 text-[14px]`}>{description}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function LearningJourney() {
+  const learning = [
+    [FiBookOpen, "Mobile Engineering", "Flutter, Dart, responsive interfaces, app architecture, and performance."],
+    [FaServer, "Backend Development", "REST APIs, authentication, relational data, Firebase, Laravel, and Node.js."],
+    [FiAward, "Cloud & Delivery", "Deployment workflows, Docker, cloud platforms, monitoring, and reliable releases."],
+  ];
+
+  return (
+    <section id="learning" className={`${sectionClass} scroll-mt-[82px]`}>
+      <div className="mb-9 flex flex-col justify-between gap-5 md:flex-row md:items-end">
+        <SectionTitle tag="LEARNING JOURNEY">Knowledge That Keeps Growing</SectionTitle>
+        <p className={`${paragraphClass} max-w-[500px]`}>
+          My development path is built around applied learning: understanding the foundations, using them in projects, and improving through feedback.
+        </p>
+      </div>
+      <div className="grid gap-4 md:grid-cols-3">
+        {learning.map(([Icon, title, description]) => (
+          <article key={title} className="group relative overflow-hidden rounded-2xl border border-[#c9dce9] bg-white/80 p-6 transition-all duration-300 hover:-translate-y-2 hover:border-[#7051ff] hover:shadow-[0_20px_55px_rgba(112,81,255,.12)] dark:border-[#19384f] dark:bg-[#081e32]/80">
+            <span className="absolute right-0 top-0 h-24 w-24 translate-x-9 -translate-y-9 rounded-full bg-[#7051ff]/10 transition-transform duration-500 group-hover:scale-150" />
+            <Icon className="relative text-[25px] text-[#7051ff] dark:text-[#9b8cff]" />
+            <h3 className="relative mt-5 text-[18px] font-bold text-[#10243a] dark:text-white">{title}</h3>
+            <p className={`${paragraphClass} relative mt-2 text-[14px]`}>{description}</p>
+          </article>
+        ))}
+      </div>
+      <p className="mt-5 text-[12px] text-[#71879a] dark:text-[#7f94a8]">
+        Formal education and verified certifications can be added here when you are ready to share them.
+      </p>
     </section>
   );
 }
@@ -1910,6 +2045,8 @@ export default function App() {
         <Reveal><Process /></Reveal>
         <Reveal><Blog /></Reveal>
         <Reveal><Experience /></Reveal>
+        <Reveal><ProfileHighlights /></Reveal>
+        <Reveal><LearningJourney /></Reveal>
         <Reveal><CurrentFocus /></Reveal>
         <Reveal><Testimonial /></Reveal>
         <Reveal><FAQ /></Reveal>
